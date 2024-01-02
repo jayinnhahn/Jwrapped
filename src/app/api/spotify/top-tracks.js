@@ -1,9 +1,9 @@
 import axios from 'axios';
 import { NextResponse } from 'next/server';
 
-export default async function handler(req, res) {
+export async function GET(req, res) {
 	try {
-		const { access_token, time_range, limit, offset } = req.query;
+		const { access_token, time_range } = req.query;
 
 		if (!access_token) {
 			return res.status(400).json({ error: 'Access token is required' });
@@ -15,20 +15,19 @@ export default async function handler(req, res) {
 
 		const params = {
 			time_range: time_range,
-			limit: limit || 10,
-			offset: offset || 0,
+			limit: 10,
+			offset: 0,
 		};
 
 		const topTracks = await axios.get(
-			'https://api.spotify.com/v1/me/top/tracks',
+			`https://api.spotify.com/v1/me/top/tracks?time_range=${params.time_range}&limit=${params.limit}&offset=${params.offset}`,
 			{
 				headers: {
 					Authorization: `Bearer ${access_token}`,
 				},
-				params: params,
 			}
 		);
-		return NextResponse.json(topTracks);
+		return NextResponse.json(topTracks.data);
 	} catch (error) {
 		console.error('Error fetching top tracks:', error);
 		res.status(500).json({ error: 'Internal Server Error' });

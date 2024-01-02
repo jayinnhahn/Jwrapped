@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import LoginPage from '@/components/LoginPage';
 import HomePage from '@/components/HomePage';
+import axios from 'axios';
 
 interface SpotifyConfig {
 	CLIENT_ID: string;
@@ -45,16 +46,52 @@ const Home: React.FC = () => {
 		setToken('');
 		window.localStorage.removeItem('token');
 	};
+	const fetchTopTracks = async () => {
+		try {
+			const accessToken = token;
+			const response = await axios.get('/api/spotify/top-tracks', {
+				headers: {
+					Authorization: 'Bearer ' + accessToken,
+				},
+				params: {
+					time_range: timeRange,
+				},
+			});
+
+			const topTracksData = response.data;
+			console.log(topTracksData);
+		} catch (error) {
+			console.error('Error fetching top users and tracks:', error);
+		}
+	};
+
+	const [timeRange, setTimeRange] = useState('medium_term');
 
 	return (
 		<main className="flex min-h-screen flex-col items-center justify-between p-24">
 			<div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
 				{!token ? (
-					<LoginPage data={SpotifiyConfigData} />
+					<div>
+						<LoginPage data={SpotifiyConfigData} />
+					</div>
 				) : (
 					<div>
 						<HomePage logout={logout} token={token} />
-						<p> {token} </p>
+						<div>
+							<h2>Top Users and Their Tracks</h2>
+							<label htmlFor="timeRange">Select Time Range:</label>
+							<select
+								id="timeRange"
+								value={timeRange}
+								onChange={(e) => setTimeRange(e.target.value)}
+							>
+								<option value="short_term">3 months</option>
+								<option value="medium_term">6 months</option>
+								<option value="long_term">1 year</option>
+							</select>
+							<button onClick={fetchTopTracks}>Fetch Top Tracks</button>
+							{/* <button onClick={fetchTopArtists}>Fetch Top Artists</button> */}
+						</div>
 					</div>
 				)}
 			</div>
