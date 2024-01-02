@@ -30,24 +30,24 @@ const ShowUsersTopValues: React.FC<ShowUsersTopValuesProps> = ({ users }) => {
 			console.error('Error fetching top users and tracks:', error);
 		}
 	};
-	const fetchTopArtists = async () => {
-		try {
-			const accessTokens = users.map((user) => user.userId);
+	// const fetchTopArtists = async () => {
+	// 	try {
+	// 		const accessTokens = users.map((user) => user.userId);
 
-			const response = await axios.get(`/api/spotify/top-users`, {
-				params: {
-					access_tokens: accessTokens,
-					time_range: timeRange,
-				},
-			});
+	// 		const response = await axios.get(`/api/spotify/top-users`, {
+	// 			params: {
+	// 				access_tokens: accessTokens,
+	// 				time_range: timeRange,
+	// 			},
+	// 		});
 
-			const topTracksData = response.data;
+	// 		const topArtistsData = response.data;
 
-			console.log(topTracksData);
-		} catch (error) {
-			console.error('Error fetching top users and tracks:', error);
-		}
-	};
+	// 		console.log(topArtistsData);
+	// 	} catch (error) {
+	// 		console.error('Error fetching top users and tracks:', error);
+	// 	}
+	// };
 
 	return (
 		<div>
@@ -63,7 +63,7 @@ const ShowUsersTopValues: React.FC<ShowUsersTopValuesProps> = ({ users }) => {
 				<option value="long_term">1 year</option>
 			</select>
 			<button onClick={fetchTopTracks}>Fetch Top Tracks</button>
-			<button onClick={fetchTopArtists}>Fetch Top Artists</button>
+			{/* <button onClick={fetchTopArtists}>Fetch Top Artists</button> */}
 		</div>
 	);
 };

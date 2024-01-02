@@ -9,14 +9,17 @@ interface LoginPageProps {
 	};
 }
 const LoginPage: React.FC<LoginPageProps> = ({ data }) => {
+	const handleLogin = () => {
+		// Construct the authorization URL with the desired scope
+		const authUrl = `${data.AUTH_ENDPOINT}?client_id=${data.CLIENT_ID}&redirect_uri=${data.REDIRECT_URL}&response_type=${data.RESPONSE_TYPE}&scope=user-top-read`;
+
+		// Redirect the user to the Spotify authorization page
+		window.location.href = authUrl;
+	};
 	return (
 		<div>
 			<p>Innhahnify</p>
-			<a
-				href={`${data.AUTH_ENDPOINT}?client_id=${data.CLIENT_ID}&redirect_uri=${data.REDIRECT_URL}&response_type=${data.RESPONSE_TYPE}`}
-			>
-				Login to Spotify
-			</a>
+			<button onClick={handleLogin}>Login to Spotify</button>
 		</div>
 	);
 };

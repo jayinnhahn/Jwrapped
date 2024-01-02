@@ -12,7 +12,7 @@ interface SpotifyConfig {
 
 const Home: React.FC = () => {
 	const SpotifiyConfigData: SpotifyConfig = {
-		CLIENT_ID: 'e7d1d801f1384e3895797ce7840a0369',
+		CLIENT_ID: '4621d4797def4a7ca7d70507fac9a08b',
 		REDIRECT_URL: 'http://localhost:3000',
 		AUTH_ENDPOINT: 'https://accounts.spotify.com/authorize',
 		RESPONSE_TYPE: 'token',
@@ -52,7 +52,10 @@ const Home: React.FC = () => {
 				{!token ? (
 					<LoginPage data={SpotifiyConfigData} />
 				) : (
-					<HomePage logout={logout} />
+					<div>
+						<HomePage logout={logout} token={token} />
+						<p> {token} </p>
+					</div>
 				)}
 			</div>
 		</main>

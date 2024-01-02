@@ -20,7 +20,7 @@ export default async function handler(req, res) {
 		};
 
 		const topArtists = await axios.get(
-			'https://api.spotify.com/v1/me/top/users',
+			'https://api.spotify.com/v1/me/top/artists',
 			{
 				headers: {
 					Authorization: `Bearer ${access_token}`,
@@ -28,9 +28,10 @@ export default async function handler(req, res) {
 				params: params,
 			}
 		);
-		return NextResponse.json(topArtists);
+
+		return NextResponse.json(topArtists.data);
 	} catch (error) {
-		console.error('Error fetching top users:', error);
+		console.error('Error fetching top artists:', error);
 		res.status(500).json({ error: 'Internal Server Error' });
 	}
 }
