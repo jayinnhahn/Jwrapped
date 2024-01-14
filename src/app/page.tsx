@@ -1,15 +1,43 @@
 'use client';
 import { useEffect, useState } from 'react';
 import LoginPage from '@/components/LoginPage';
+import axios, { AxiosError } from 'axios';
 import HomePage from '@/components/HomePage';
-import axios from 'axios';
-
 interface SpotifyConfig {
 	CLIENT_ID: string;
 	REDIRECT_URL: string;
 	AUTH_ENDPOINT: string;
 	RESPONSE_TYPE: string;
 }
+
+const fetchDataFromSpotify = async (
+	accessToken: string,
+	timeRange: string
+): Promise<any> => {
+	try {
+		const response = await axios.get('http://localhost:3000/api/spotify', {
+			// headers: {
+			// 	Authorization: 'Bearer ' + accessToken,
+			// },
+			params: {
+				time_range: timeRange,
+				access_token: accessToken,
+			},
+		});
+
+		return response.data;
+	} catch (error) {
+		console.error('Error fetching top users and tracks:', error);
+
+		if (axios.isAxiosError(error)) {
+			const axiosError = error as AxiosError;
+			console.error('Response status:', axiosError.response?.status);
+			console.error('Response data:', axiosError.response?.data);
+		}
+
+		throw error;
+	}
+};
 
 const Home: React.FC = () => {
 	const SpotifiyConfigData: SpotifyConfig = {
@@ -20,6 +48,7 @@ const Home: React.FC = () => {
 	};
 
 	const [token, setToken] = useState<string | null>('');
+	const [timeRange, setTimeRange] = useState<string>('medium_term');
 
 	useEffect(() => {
 		const hash = window.location.hash;
@@ -46,39 +75,38 @@ const Home: React.FC = () => {
 		setToken('');
 		window.localStorage.removeItem('token');
 	};
+
 	const fetchTopTracks = async () => {
 		try {
-			const accessToken = token;
-			const response = await axios.get('/api/spotify/top-tracks', {
-				headers: {
-					Authorization: 'Bearer ' + accessToken,
-				},
-				params: {
-					time_range: timeRange,
-				},
-			});
-
-			const topTracksData = response.data;
-			console.log(topTracksData);
+			if (token !== null) {
+				const accessToken = token;
+				const topTracksData = await fetchDataFromSpotify(
+					accessToken,
+					timeRange
+				);
+				console.log(topTracksData);
+			} else {
+				console.error('Access token is null.');
+			}
 		} catch (error) {
-			console.error('Error fetching top users and tracks:', error);
+			// Handle the error if needed
 		}
 	};
 
-	const [timeRange, setTimeRange] = useState('medium_term');
-
 	return (
-		<main className="flex min-h-screen flex-col items-center justify-between p-24">
-			<div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-				{!token ? (
-					<div>
-						<LoginPage data={SpotifiyConfigData} />
-					</div>
-				) : (
-					<div>
-						<HomePage logout={logout} token={token} />
+		<main className="bg-beige w-full pt-5">
+			{' '}
+			{!token ? (
+				<div>
+					<LoginPage data={SpotifiyConfigData} />
+				</div>
+			) : (
+				<div className="w-full">
+					<HomePage logout={logout} token={token} />
+					{/* <p> {token}</p>
+						<button onClick={logout}>Logout</button>
 						<div>
-							<h2>Top Users and Their Tracks</h2>
+				 			<h2>Top Users and Their Tracks</h2>
 							<label htmlFor="timeRange">Select Time Range:</label>
 							<select
 								id="timeRange"
@@ -90,11 +118,9 @@ const Home: React.FC = () => {
 								<option value="long_term">1 year</option>
 							</select>
 							<button onClick={fetchTopTracks}>Fetch Top Tracks</button>
-							{/* <button onClick={fetchTopArtists}>Fetch Top Artists</button> */}
-						</div>
-					</div>
-				)}
-			</div>
+						</div> */}
+				</div>
+			)}
 		</main>
 	);
 };

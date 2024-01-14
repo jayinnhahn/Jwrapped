@@ -1,5 +1,8 @@
 import React from 'react';
-
+import LandingPageModal from './LandingPageModal';
+import Breaker from './Breaker';
+import AboutModal from './AboutModal';
+import PrivacyPolicySection from './PrivacyPolicySection';
 interface LoginPageProps {
 	data: {
 		CLIENT_ID: string;
@@ -15,8 +18,22 @@ const LoginPage: React.FC<LoginPageProps> = ({ data }) => {
 	};
 	return (
 		<div>
-			<p>Innhahnify</p>
-			<button onClick={handleLogin}>Login to Spotify</button>
+			<div className="bg-beige w-full pt-5">
+				<div className="flex justify-center">
+					<h1 className="text-darkgreen font-Monotage text-center text-newgreen lg:text-[11rem] tracking-wide font-bold lg:w-[48rem] leading-none ">
+						FIND YOUR TOP TRACKS
+					</h1>
+				</div>
+				<div className="px-20">
+					<LandingPageModal onLogin={handleLogin} />
+				</div>
+			</div>
+			<Breaker />
+			<div className="px-20">
+				<AboutModal />
+			</div>
+			<Breaker />
+			<PrivacyPolicySection />
 		</div>
 	);
 };
