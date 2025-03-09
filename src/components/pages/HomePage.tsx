@@ -13,12 +13,9 @@ const HomePage: React.FC<HomePageProps> = ({ logout, token }) => {
   const [timeRange, setTimeRange] = useState('medium_term');
   const [forDownload, setForDownload] = useState(false);
   const [category, setCategory] = useState('tracks');
-  const [albumImageUrl, setAlbumUrl] = useState('https://i.scdn.co/image/ab67616d0000b273c5649add07ed3720be9d5526');
   const [top5Tracks, setTopTracks] = useState([]);
   const [top5Artists, setTopArtists] = useState([]);
-  const [tokenExpired, setTokenExpired] = useState(false); 
-  const [userName, setUserName] = useState('');
-  const [userImage, setUserImage] = useState('https://i.scdn.co/image/ab67616d0000b273c5649add07ed3720be9d5526');
+  const [tokenExpired, setTokenExpired] = useState(false);
   const resultsModalRef = useRef(null);
 
   const fetchDataFromSpotify = async (accessToken: string, timeRange: string, category: string) => {
@@ -37,11 +34,11 @@ const HomePage: React.FC<HomePageProps> = ({ logout, token }) => {
       throw error;
     }
   };
-
   const fetchTopTracks = useCallback(async () => {
     try {
       if (!token || token === 'undefined') {
-        console.error('Access token is missing.');
+        console.error('No token found. Redirecting to login.');
+        logout();
         return;
       }
       const tokenExpiration = localStorage.getItem('spotify_token_expires');
@@ -51,49 +48,22 @@ const HomePage: React.FC<HomePageProps> = ({ logout, token }) => {
         return;
       }
       const topTracksData = await fetchDataFromSpotify(token, timeRange, category);
+      console.log('Fetched Data:', topTracksData);
       if (category === 'tracks') {
         setTopTracks(topTracksData.items.map((item: any) => item.name));
         setTopArtists(topTracksData.items.map((item: any) => item.artists[0].name));
-        setAlbumUrl(topTracksData.items[0].album.images[0].url);
       } else if (category === 'artists') {
-        setTopTracks(topTracksData.items.map((item: any) => item.name));
-        setAlbumUrl(topTracksData.items[0].images[0].url);
+        setTopTracks([]);
+        setTopArtists(topTracksData.items.map((item: any) => item.name));
       }
     } catch (error) {
       console.error('Error fetching data from Spotify API:', error);
     }
   }, [token, timeRange, category, logout]);
 
-  const fetchUserProfile = async (accessToken: string) => {
-    try {
-      const response = await axios.get('https://api.spotify.com/v1/me', {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          'Content-Type': 'application/json',
-        },
-      });
-      setUserName(response.data.display_name);
-      const images = response.data.images;
-      if (images && images.length > 0) {
-        let largestImage = images[0];
-        for (let i = 1; i < images.length; i++) {
-          if (images[i].width > largestImage.width) {
-            largestImage = images[i];
-          }
-        }
-        setUserImage(largestImage.url);
-      }
-    } catch (error) {
-      console.error('Error fetching user profile:', error);
-    }
-  };
-
   useEffect(() => {
     fetchTopTracks();
-    if (token) {
-      fetchUserProfile(token);
-    }
-  }, [token, timeRange, category, fetchTopTracks]);
+  }, [token,  timeRange, category, fetchTopTracks]);
 
   const downloadDivContent = async (contentElement: HTMLElement) => {
 	try {
@@ -103,7 +73,7 @@ const HomePage: React.FC<HomePageProps> = ({ logout, token }) => {
 		useCORS: true,
 		allowTaint: true,
 		backgroundColor: '#ffffff',
-		scale: 2, // Higher quality image
+		scale: 2,
 	  });
 	  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
