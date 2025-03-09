@@ -1,57 +1,37 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import {  useAnimation } from 'framer-motion';
+import React from "react";
+import Image from "next/image";
+import JwrappedLogo from "@/../public/Image/Jwrppedlogo.png";
 
 export const PrivacyPolicySection = () => {
-	const policies = [
-		'Jwrapped is an open-source web application that allows users to generate and display their top Spotify tracks. By using Jwrapped, you agree to the following privacy policy:',
-		'- Jwrapped utilizes the Spotify Web API to access your Spotify accounts top tracks.',
-		'- Your Spotify account username and data are used solely for the purpose of fetching and displaying your top artists and tracks.',
-		'- None of the data used by Jwrapped is stored or collected anywhere, and it is NOT shared with any third parties.',
-		'- All information obtained from Spotify is used exclusively for the purpose of generating your Wrapped Spotify Data on Jwrapped.',
-	];
-	const controls = useAnimation();
+  return (
+    <div className="flex flex-col items-center text-center w-full max-w-4xl px-6 md:px-12">
+          <div className="relative w-[3rem] h-[3rem] md:w-[8rem] md:h-[8rem]">
+      <Image
+        src={JwrappedLogo}
+        alt="Jwrapped Logo"
+        className="object-contain"
+        draggable={false}
+      />
+    </div>
+      <h1 className="text-darkgreen font-Monotage tracking-wider text-3xl md:text-5xl lg:text-7xl font-bold leading-tight mt-4">
+        PRIVACY POLICY
+      </h1>
 
-	const handleInView = (inView: boolean) => {
-		if (inView) {
-			controls.start({ rotate: 0, scale: 1 });
-		} 
-	};
+      <p className="font-Roboto font-normal text-sm md:text-lg text-darkgreen mt-2">
+        Jwrapped is an open-source app that fetches your top Spotify tracks. It uses the
+        Spotify Web API to retrieve your top tracks and artists. Your data is only used to generate
+        your Wrapped experience.
+      </p>
 
-	return (
-		<motion.div 		
-		initial={{ rotate: 0, scale: 0 }}
-		animate={controls}
-		transition={{
-			type: 'spring',
-			stiffness: 100,
-			damping: 20,
-		}}
-		onViewportEnter={() => handleInView(true)}
-		className="grid content-between bg-beige rounded-[40px] w-full px-8 lg:px-16 py-8 gap-12 lg:gap-16 text-darkgreen border-8 border-darkgreen">
-			<div className="w-full flex flex-col md:flex-row justify-between items-center">
-				<div
-					className="font-Monotage text-center md:text-left md:justify-self-start leading-none text-[4rem] md:text-[10rem] lg:text-[17rem]"
-				>
-					Privacy Policy
-				</div>
-				
+      <p className="font-Roboto font-normal text-sm md:text-lg text-darkgreen mt-2">
+        Jwrapped does <span className="font-bold">NOT</span> store, collect, or share any data with third parties.
+      </p>
+
+      <div className='mt-20'>
+					<h3> Made By Jay Tan</h3>
 			</div>
-			<div className="text-justify font-Roboto">
-				<ul>
-					{policies.map((policy, index) => (
-						<li
-							key={index}
-							className="text-[1.25rem] lg:text-[1.75rem] font-medium mb-2"
-						>
-							<div>{policy}</div>
-						</li>
-					))}
-				</ul>
-			</div>
-
-			
-		</motion.div>
-	);
+    </div>
+  );
 };
 
+export default PrivacyPolicySection;
