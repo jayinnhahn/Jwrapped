@@ -49,23 +49,22 @@ const Navbar = () => {
           </button>
         </div>
       </div>
-
       {isOpen && (
-        <div className="md:hidden absolute top-[4.5rem] left-0 right-0 bg-neworange rounded-lg shadow-lg py-3 px-6">
-          {navItems.map(({ name, path }) => (
-            <Link
-              key={path}
-              href={path}
-              className={`block py-2 text-lg tracking-wide transition-colors duration-200 font-medium ${
-                pathname === path ? "text-green underline" : "text-beige hover:text-green"
-              }`}
-            >
-              {name}
-            </Link>
-          ))}
-        </div>
+      <div className="md:hidden fixed top-16 left-0 right-0 bg-neworange rounded-lg shadow-lg py-3 px-6 z-50">
+        {navItems.map(({ name, path }) => (
+          <Link
+            key={path}
+            href={path}
+            className={`block py-2 text-lg tracking-wide transition-colors duration-200 font-medium ${
+              pathname === path ? "text-green underline" : "text-beige hover:text-green"
+            }`}
+          >
+            {name}
+          </Link>
+        ))}
+      </div>
       )}
-    </div>
+  </div>
   );
 };
 
