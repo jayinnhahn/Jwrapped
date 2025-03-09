@@ -30,7 +30,7 @@
 		".next/types/**/*.ts",
 		"src/app/api/spotify/top-tracks/route.js",
 		"src/app/api/spotify/top-artists/route.js",
-		"src/pages/index.js"
+		"src/components/pages/index.js"
 	],
 	"exclude": ["node_modules"]
 }
