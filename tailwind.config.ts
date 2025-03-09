@@ -30,9 +30,9 @@ const config: Config = {
 					'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
 			},
 			colors: {
-				beige: '#FEFAE0',
+				beige: '#FFFCDC',
 				darkgreen: '#0D1208',
-				green: '#283618',
+				green: '#14281D',
 				neworange: '#FF7800',
 				spotify: '#1DB954',
 			},

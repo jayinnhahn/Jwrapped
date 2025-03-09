@@ -1,31 +1,31 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-
+import React from "react";
+import JwrappedLogo from '@/../public/Image/Jwrppedlogo.png';
+import Image from "next/image";
 export const AboutSection = () => {
-	return (
-		<motion.div
-			initial={{ rotate: 0, scale: 0 }}
-			animate={{ rotate: 0, scale: 1 }}
-			transition={{
-				type: 'spring',
-				stiffness: 100,
-				damping: 20,
-			}}> 
-			<div className="grid content-between bg-neworange rounded-[40px] w-full px-8 lg:px-16 py-8 gap-12 lg:gap-16 text-darkgreen"
-		>
-			<h2 className="font-Monotage justify-center text-center md:text-left lg:justify-self-start leading-none text-[6rem] md:text-[11rem] lg:text-[17rem]">
-				About
-			</h2>
-			<div className="justify-center md:justify-self-end md:w-[30rem] lg:w-full xl:w-[40rem]">
-				<p className="text-center md:text-right font-bold text-[1rem] lg:text-[1.5rem]">
-					Inspired by Receiptify, Jwrapped is a tool to showcase the top artist
-					and top songs the user has in the last week, last 6 months and all
-					time favorites, But its structure is more on a Spotify Wrapped type of
-					vibe.
-				</p>
-			</div>
-			</div>
-		</motion.div>
-	);
-};
+  return (
+    <header className="flex flex-col items-center text-center w-full max-w-4xl">
+    <div className="relative w-[3rem] h-[3rem] md:w-[8rem] md:h-[8rem]">
+      <Image
+        src={JwrappedLogo}
+        alt="Jwrapped Logo"
+        className="object-contain"
+        draggable={false}
+      />
+    </div>
 
+    <h1 className="text-darkgreen font-Monotage tracking-wider text-3xl md:text-5xl lg:text-7xl font-bold leading-tight mt-4">
+      ABOUT JWRAPPED
+    </h1>
+
+    <p className="font-Roboto font-normal text-sm md:text-lg text-darkgreen mt-2">
+    Inspired by Receiptify, Jwrapped is a tool that showcases your top artists
+          and songs from the last week, last 6 months, and all-time favorites—
+          designed with a Spotify Wrapped-style experience.    </p>
+
+
+      <div className='mt-20'>
+				<h3> Made By Jay Tan</h3>
+			</div>
+  </header>
+  );
+};
