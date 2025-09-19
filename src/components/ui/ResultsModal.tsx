@@ -67,7 +67,6 @@ export const ResultsModal: React.FC<ResultsModalProps> = ({
       </div>
       <div className="pt-4 text-center">
         <p className="text-xs mb-2">Time period: {timeRange}</p>
-        <p className="text-xs text-gray-500">Thank you for using JWRAPPED</p>
       </div>
     </div>
   );

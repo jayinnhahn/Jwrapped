@@ -6,10 +6,9 @@ import Navbar from '@/components/ui/Navbar';
 
 interface HomePageProps {
   logout: () => void;
-  token: string | null;
 }
 
-const HomePage: React.FC<HomePageProps> = ({ logout, token }) => {
+const HomePage: React.FC<HomePageProps> = ({ logout }) => {
   const [timeRange, setTimeRange] = useState('medium_term');
   const [forDownload, setForDownload] = useState(false);
   const [category, setCategory] = useState('tracks');
@@ -18,52 +17,39 @@ const HomePage: React.FC<HomePageProps> = ({ logout, token }) => {
   const [tokenExpired, setTokenExpired] = useState(false);
   const resultsModalRef = useRef(null);
 
-  const fetchDataFromSpotify = async (accessToken: string, timeRange: string, category: string) => {
-    try {
-      const url = `https://api.spotify.com/v1/me/top/${category}`;
-      const queryParams = `time_range=${timeRange}&limit=5&offset=0`;
-      const response = await axios.get(`${url}?${queryParams}`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          'Content-Type': 'application/json',
-        },
-      });
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching top users and tracks:', error);
-      throw error;
+const fetchDataFromSpotify = async (timeRange: string, category: string) => {
+  try {
+    const response = await axios.get(`/api/spotify/top`, {
+      params: { timeRange, category },
+      withCredentials: true, // <--- send session cookie
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching top users and tracks:', error);
+    if (error.response?.status === 401) {
+      logout(); // session expired, redirect to login
     }
-  };
-  const fetchTopTracks = useCallback(async () => {
-    try {
-      if (!token || token === 'undefined') {
-        console.error('No token found. Redirecting to login.');
-        logout();
-        return;
-      }
-      const tokenExpiration = localStorage.getItem('spotify_token_expires');
-      if (tokenExpiration && Date.now() > Number(tokenExpiration)) {
-        setTokenExpired(true);
-        logout();
-        return;
-      }
-      const topTracksData = await fetchDataFromSpotify(token, timeRange, category);
-      console.log('Fetched Data:', topTracksData);
-      if (category === 'tracks') {
-        setTopTracks(topTracksData.items.map((item: any) => item.name));
-        setTopArtists(topTracksData.items.map((item: any) => item.artists[0].name));
-      } else if (category === 'artists') {
-        setTopTracks([]);
-        setTopArtists(topTracksData.items.map((item: any) => item.name));
-      }
-    } catch (error) {
-      console.error('Error fetching data from Spotify API:', error);
+    throw error;
+  }
+};
+ const fetchTopTracks = useCallback(async () => {
+  try {
+    const topTracksData = await fetchDataFromSpotify(timeRange, category);
+    if (category === 'tracks') {
+      setTopTracks(topTracksData.items.map((item: any) => item.name));
+      setTopArtists(topTracksData.items.map((item: any) => item.artists[0].name));
+    } else if (category === 'artists') {
+      setTopTracks([]);
+      setTopArtists(topTracksData.items.map((item: any) => item.name));
     }
-  }, [token, timeRange, category, logout]);
+  } catch (error) {
+    console.error('Error fetching data from Spotify API:', error);
+  }
+}, [timeRange, category, logout]);
 
   useEffect(() => {
     fetchTopTracks();
-  }, [token,  timeRange, category, fetchTopTracks]);
+  }, [  timeRange, category, fetchTopTracks]);
 
   const downloadDivContent = async (contentElement: HTMLElement) => {
 	try {

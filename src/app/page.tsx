@@ -2,58 +2,37 @@
 import { useEffect, useState } from 'react';
 import LoginPage from '@/components/pages/LoginPage';
 import HomePage from '@/components/pages/HomePage';
-interface SpotifyConfig {
-	CLIENT_ID?: string;
-	REDIRECT_URL?: string;
-	AUTH_ENDPOINT?: string;
-	RESPONSE_TYPE: string;
-}
 
 const Home: React.FC = () => {
-	const SpotifiyConfigData: SpotifyConfig = {
-		CLIENT_ID: process.env.NEXT_PUBLIC_CLIENT_ID,
-		REDIRECT_URL: process.env.NEXT_PUBLIC_REDIRECT_URL,
-		AUTH_ENDPOINT: process.env.NEXT_PUBLIC_AUTH_ENDPOINT,
-		RESPONSE_TYPE: 'token',
-	};
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
-	const [token, setToken] = useState<string | null>('');
+  const logout = async () => {
+    await fetch('/api/spotify/logout', { method: 'POST' }); // optional endpoint to clear session
+    setIsAuthenticated(false);
+  };
 
-	useEffect(() => {
-		const hash = window.location.hash;
-		let tokenFromStorage = window.localStorage.getItem('token');
+  useEffect(() => {
+    // check if user is logged in via session cookie
+    fetch('/api/spotify/top', { credentials: 'include' })
+      .then(res => {
+        if (res.status === 401) return false; // not authenticated
+        return true;
+      })
+      .then(auth => setIsAuthenticated(auth))
+      .catch(() => setIsAuthenticated(false));
+  }, []);
 
-		if (!tokenFromStorage && hash) {
-			const accessTokenParam = hash
-				.substring(1)
-				.split('&')
-				.find((elem) => elem.startsWith('access_token'));
+  if (isAuthenticated === null) return <p>Loading...</p>; // show loading while checking
 
-			if (accessTokenParam) {
-				tokenFromStorage = accessTokenParam.split('=')[1];
-
-				window.location.hash = '';
-				window.localStorage.setItem('token', tokenFromStorage);
-			}
-		}
-
-		setToken(tokenFromStorage);
-	}, []);
-
-	const logout = () => {
-		setToken('');
-		window.localStorage.removeItem('token');
-	};
-
-	return (
-		<main className="bg-beige w-full pt-5">
-			{!token ? (
-				<LoginPage data={SpotifiyConfigData} />
-			) : (
-				<HomePage logout={logout} token={token} />
-			)}
-		</main>
-	);
+  return (
+    <main className="bg-beige w-full pt-5">
+      {!isAuthenticated ? (
+        <LoginPage />
+      ) : (
+        <HomePage logout={logout} />
+      )}
+    </main>
+  );
 };
 
 export default Home;
