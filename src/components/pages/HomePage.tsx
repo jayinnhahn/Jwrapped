@@ -21,15 +21,15 @@ const fetchDataFromSpotify = async (timeRange: string, category: string) => {
   try {
     const response = await axios.get(`/api/spotify/top`, {
       params: { timeRange, category },
-      withCredentials: true, // <--- send session cookie
+      withCredentials: true, 
     });
     return response.data;
   } catch (error) {
-    console.error('Error fetching top users and tracks:', error);
-    if (error.response?.status === 401) {
-      logout(); // session expired, redirect to login
-    }
-    throw error;
+	console.error('Error fetching top users and tracks:', error);
+	if (axios.isAxiosError(error) && error.response?.status === 401) {
+	  logout(); 
+	}
+	throw error;
   }
 };
  const fetchTopTracks = useCallback(async () => {
