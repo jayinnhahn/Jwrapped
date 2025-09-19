@@ -22,14 +22,9 @@ export async function GET(req: Request) {
 
     const { access_token, refresh_token, expires_in } = response.data;
 
-    console.log('Access Token:', access_token); 
-    console.log('Expires in:', expires_in);
-
-    // ✅ Redirect with absolute URL
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
     const res = NextResponse.redirect(baseUrl);
 
-    // Store tokens in cookies
     res.cookies.set('spotify_access_token', access_token, { httpOnly: true, path: '/' });
     res.cookies.set('spotify_refresh_token', refresh_token, { httpOnly: true, path: '/' });
 

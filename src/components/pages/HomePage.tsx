@@ -17,39 +17,33 @@ const HomePage: React.FC<HomePageProps> = ({ logout }) => {
   const [tokenExpired, setTokenExpired] = useState(false);
   const resultsModalRef = useRef(null);
 
-const fetchDataFromSpotify = async (timeRange: string, category: string) => {
-  try {
-    const response = await axios.get(`/api/spotify/top`, {
-      params: { timeRange, category },
-      withCredentials: true, 
-    });
-    return response.data;
-  } catch (error) {
-	console.error('Error fetching top users and tracks:', error);
-	if (axios.isAxiosError(error) && error.response?.status === 401) {
-	  logout(); 
-	}
-	throw error;
-  }
-};
- const fetchTopTracks = useCallback(async () => {
-  try {
-    const topTracksData = await fetchDataFromSpotify(timeRange, category);
-    if (category === 'tracks') {
-      setTopTracks(topTracksData.items.map((item: any) => item.name));
-      setTopArtists(topTracksData.items.map((item: any) => item.artists[0].name));
-    } else if (category === 'artists') {
-      setTopTracks([]);
-      setTopArtists(topTracksData.items.map((item: any) => item.name));
+useEffect(() => {
+  const fetchTopTracks = async () => {
+    try {
+      const response = await axios.get(`/api/spotify/top`, {
+        params: { timeRange, category },
+        withCredentials: true, 
+      });
+      const topTracksData = response.data;
+
+      if (category === 'tracks') {
+        setTopTracks(topTracksData.items.map((item: any) => item.name));
+        setTopArtists(topTracksData.items.map((item: any) => item.artists[0].name));
+      } else if (category === 'artists') {
+        setTopTracks([]);
+        setTopArtists(topTracksData.items.map((item: any) => item.name));
+      }
+    } catch (error) {
+      console.error('Error fetching top users and tracks:', error);
+      if (axios.isAxiosError(error) && error.response?.status === 401) {
+        logout();
+      }
     }
-  } catch (error) {
-    console.error('Error fetching data from Spotify API:', error);
-  }
+  };
+
+  fetchTopTracks();
 }, [timeRange, category, logout]);
 
-  useEffect(() => {
-    fetchTopTracks();
-  }, [  timeRange, category, fetchTopTracks]);
 
   const downloadDivContent = async (contentElement: HTMLElement) => {
 	try {

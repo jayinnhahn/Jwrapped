@@ -5,10 +5,6 @@ export async function GET() {
   const redirectUri = process.env.SPOTIFY_REDIRECT_URI;
   const scope = 'user-top-read';
 
-  // 📝 Log environment values (never log secrets in production!)
-  console.log('SPOTIFY_CLIENT_ID:', clientId);
-  console.log('SPOTIFY_REDIRECT_URI:', redirectUri);
-
   if (!clientId || !redirectUri) {
     console.error('Spotify login failed: missing env variables');
     return NextResponse.json({ error: 'Missing Spotify env variables' }, { status: 500 });
